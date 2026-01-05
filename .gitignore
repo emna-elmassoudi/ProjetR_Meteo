@@ -9,3 +9,4 @@
 # Quarto / rendered output
 reports/index_files/
 reports/*_files/
+reports/climat_1961_1990_clean.csv
