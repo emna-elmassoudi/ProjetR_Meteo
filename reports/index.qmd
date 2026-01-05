@@ -4,6 +4,8 @@ format:
   html:
     toc: true
     number-sections: true
+    embed-resources: true
+
 lang: fr
 ---
 
@@ -16,7 +18,7 @@ Ce rapport présente une analyse des normales climatiques en Tunisie sur la pér
 library(tidyverse)
 
 climat_clean <- readr::read_csv(
-  "climat_1961_1990_clean.csv",
+  "../data/clean/climat_1961_1990_clean.csv",
   show_col_types = FALSE
 )
 
