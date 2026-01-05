@@ -13,3 +13,6 @@ reports/climat_1961_1990_clean.csv
 
 # Allow rendered report HTML
 !reports/index.html
+
+# Allow GitHub Pages site
+!docs/index.html
