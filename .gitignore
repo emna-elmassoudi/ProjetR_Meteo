@@ -5,3 +5,7 @@
 *.html
 *.cache
 .DS_Store
+
+# Quarto / rendered output
+reports/index_files/
+reports/*_files/
