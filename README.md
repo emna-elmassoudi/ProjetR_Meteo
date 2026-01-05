@@ -25,3 +25,7 @@ Analyser la saisonnalité des températures et des précipitations en Tunisie su
 
 ## Exécution
 Ouvrir le projet dans RStudio et lancer le rendu du fichier Quarto dans `reports/`.
+
+## Liens
+- Rapport (Quarto) : `reports/index.qmd`
+- Slides : `slides/presentation.pdf`
