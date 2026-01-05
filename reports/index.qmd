@@ -1,0 +1,192 @@
+---
+title: "Analyse des normales climatiques (1961–1990) — Tunisie"
+format:
+  html:
+    toc: true
+    number-sections: true
+lang: fr
+---
+
+## Introduction
+Ce rapport présente une analyse des normales climatiques en Tunisie sur la période 1961–1990.
+
+## Chargement des données
+
+```{r}
+library(tidyverse)
+
+climat_clean <- readr::read_csv(
+  "climat_1961_1990_clean.csv",
+  show_col_types = FALSE
+)
+
+glimpse(climat_clean)
+```
+
+## Préparation des variables
+```{r}
+climat_sel <- climat_clean %>%
+  select(MONTH, TMM, TNM, TXM, RRTM) %>%
+  mutate(MONTH = as.integer(MONTH))
+
+range(climat_sel$MONTH, na.rm = TRUE)
+
+
+stats_mensuelles <- climat_sel %>%
+  group_by(MONTH) %>%
+  summarise(
+    temp_moy = mean(TMM, na.rm = TRUE),
+    temp_min = mean(TNM, na.rm = TRUE),
+    temp_max = mean(TXM, na.rm = TRUE),
+    pluie_moy = mean(RRTM, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  arrange(MONTH)
+
+stats_mensuelles
+```
+## Mois le plus chaud
+
+```{r}
+stats_mensuelles %>% 
+  slice_max(temp_moy, n = 1)
+```
+**Interprétation :**  
+Le mois le plus chaud correspond au mois d’août,
+avec une température moyenne mensuelle d’environ 27,6 °C.
+
+## Mois le plus froid
+
+```{r}
+stats_mensuelles %>%
+  slice_min(temp_moy, n = 1)
+```
+**Interprétation :**  
+Le mois le plus froid est janvier, avec une température moyenne mensuelle d’environ 10,8 °C.
+Cela reflète la saison hivernale, où l’ensoleillement et les températures sont les plus faibles.
+
+## Mois le plus pluvieux
+
+```{r}
+stats_mensuelles %>%
+  slice_max(pluie_moy, n = 1)
+```
+**Interprétation :**  
+Le mois le plus pluvieux correspond au mois d’octobre,
+avec des précipitations moyennes mensuelles d’environ 52,3 mm.
+Cela s’explique par le retour des perturbations automnales,
+caractéristique du climat méditerranéen en Tunisie.
+
+## Mois le plus sec
+
+```{r}
+stats_mensuelles %>%
+  slice_min(pluie_moy, n = 1)
+```
+**Interprétation :**  
+Le mois le plus sec correspond au mois de juillet,
+avec des précipitations moyennes mensuelles d’environ 3,6 mm.
+Cette période est marquée par une forte sécheresse estivale,
+typique du climat tunisien.
+
+##Amplitude thermique mensuelle
+```{r}
+stats_mensuelles <- stats_mensuelles %>%
+mutate(amplitude_thermique = temp_max - temp_min)
+
+stats_mensuelles
+
+```
+**Interprétation :**  
+L’amplitude thermique mensuelle est plus élevée en été, ce qui traduit des journées très chaudes (TXM élevée) et des nuits relativement plus fraîches (TNM plus basse).  
+Elle diminue en hiver, indiquant des écarts jour/nuit plus faibles et des températures plus homogènes.
+
+```{r}
+ggplot(stats_mensuelles, aes(x = MONTH, y = amplitude_thermique)) +
+  geom_line(color = "darkred") +
+  geom_point(color = "darkred") +
+  scale_x_continuous(breaks = 1:12) +
+  labs(
+    title = "Amplitude thermique mensuelle (1961–1990)",
+    x = "Mois",
+    y = "Amplitude thermique (°C)"
+  )
+```
+**Interprétation :**  
+L’amplitude thermique mensuelle est plus élevée durant les mois d’été,
+en raison de fortes températures maximales et de nuits relativement plus fraîches.
+Elle est plus faible en hiver, traduisant une moindre variation thermique quotidienne.
+
+```{r}
+ggplot(stats_mensuelles, aes(x = MONTH)) +
+  geom_col(aes(y = pluie_moy), fill = "steelblue", alpha = 0.7) +
+  geom_line(aes(y = temp_moy * 2), color = "darkred", size = 1) +
+  geom_point(aes(y = temp_moy * 2), color = "darkred") +
+  scale_x_continuous(breaks = 1:12) +
+  scale_y_continuous(
+    name = "Précipitations (mm)",
+    sec.axis = sec_axis(~ . / 2, name = "Température moyenne (°C)")
+  ) +
+  labs(
+    title = "Comparaison température moyenne et précipitations (1961–1990)",
+    x = "Mois"
+  )
+```
+**Interprétation :**  
+La comparaison entre les températures moyennes et les précipitations
+montre une opposition saisonnière marquée.
+Les mois estivaux sont caractérisés par des températures élevées
+et de faibles précipitations, tandis que les mois d’automne et d’hiver
+présentent des températures plus modérées accompagnées de précipitations plus importantes.
+
+RQ : La température a été mise à l’échelle afin de permettre une visualisation conjointe avec les précipitations.
+
+## Température moyenne mensuelle
+
+```{r}
+ggplot(stats_mensuelles, aes(x = MONTH, y = temp_moy)) +
+  geom_line() +
+  geom_point() +
+  scale_x_continuous(breaks = 1:12) +
+  labs(
+    title = "Température moyenne mensuelle (1961–1990)",
+    x = "Mois",
+    y = "Température (°C)"
+  )
+```
+**Interprétation :**
+  
+La température moyenne mensuelle en Tunisie présente une évolution saisonnière marquée.
+Les valeurs les plus basses sont observées en hiver (janvier–février), tandis que les
+températures atteignent un maximum en été, notamment en juillet et août.
+Cette dynamique reflète le climat méditerranéen caractérisé par des étés chauds et des hivers modérés.
+
+## Précipitations moyennes mensuelles
+
+```{r}
+ggplot(stats_mensuelles, aes(x = MONTH, y = pluie_moy)) +
+  geom_col(fill = "steelblue") +
+  scale_x_continuous(breaks = 1:12) +
+  labs(
+    title = "Précipitations moyennes mensuelles (1961–1990)",
+    x = "Mois",
+    y = "Précipitations (mm)"
+  )
+```
+**Interprétation :**  
+Les précipitations moyennes mensuelles montrent une forte saisonnalité.
+Les mois d’hiver et d’automne enregistrent les cumuls les plus élevés,
+alors que l’été est marqué par une nette diminution des précipitations,
+illustrant une période sèche typique du climat tunisien.
+
+## Synthèse des résultats
+
+L’analyse conjointe des températures moyennes, des précipitations et de l’amplitude thermique met en évidence une forte saisonnalité du climat tunisien.  
+Les mois estivaux sont caractérisés par des températures élevées, une forte amplitude thermique et de faibles précipitations, tandis que l’hiver et l’automne présentent des températures plus modérées accompagnées de pluies plus importantes.
+
+## Conclusion
+
+L’analyse des normales climatiques sur la période 1961–1990 met en évidence une forte saisonnalité du climat en Tunisie.  
+Les résultats confirment la dominance d’un climat méditerranéen, caractérisé par des étés chauds et secs et des hivers relativement doux et plus humides.  
+Cette répartition saisonnière des températures et des précipitations a des implications importantes pour les ressources en eau, l’agriculture et la gestion climatique.
+
