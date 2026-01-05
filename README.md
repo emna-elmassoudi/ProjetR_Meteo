@@ -1,6 +1,8 @@
 # ProjetR_Meteo — Analyse des normales climatiques (1961–1990) — Tunisie
 
 ## Objectif
+
+*Outils utilisés : R, tidyverse, Quarto.*
 Analyser la saisonnalité des températures et des précipitations en Tunisie sur la période 1961–1990.
 
 ## Données
@@ -24,6 +26,8 @@ Analyser la saisonnalité des températures et des précipitations en Tunisie su
 - slides/ : présentation (PDF/PPT)
 
 ## Exécution
+
+*Les scripts R sont disponibles dans le dossier `scripts/`.*
 Ouvrir le projet dans RStudio et lancer le rendu du fichier Quarto dans `reports/`.
 
 ## Liens
