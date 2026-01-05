@@ -15,12 +15,19 @@ Ce rapport présente une analyse des normales climatiques en Tunisie sur la pér
 ## Chargement des données
 
 ```{r}
-library(tidyverse)
+library(readr)
+library(dplyr)
+library(ggplot2)
 
 climat_clean <- readr::read_csv(
   "../data/clean/climat_1961_1990_clean.csv",
   show_col_types = FALSE
 )
+
+climat_clean <- climat_clean %>% 
+  rename(MONTH = month, TMM = tmm, TNM = tnm, TXM = txm, RRTM = rrtm)
+
+
 
 glimpse(climat_clean)
 ```
